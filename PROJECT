@@ -2,6 +2,10 @@ domain: example.com
 layout: go.kubebuilder.io/v2
 projectName: assisted-operator
 repo: github.com/filanov/assisted-operator
+resources:
+- group: service
+  kind: AssistedService
+  version: v1
 version: 3-alpha
 plugins:
   go.sdk.operatorframework.io/v2-alpha: {}
