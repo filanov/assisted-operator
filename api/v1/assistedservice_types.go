@@ -25,17 +25,27 @@ import (
 
 // AssistedServiceSpec defines the desired state of AssistedService
 type AssistedServiceSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of AssistedService. Edit AssistedService_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// URL is a location of an assisted-service instance
+	URL   string `json:"url"`
+	Token string `json:"token"`
 }
+
+type SyncState string
+
+const (
+	SyncStateOK    SyncState = "OK"
+	SyncStateError SyncState = "error"
+)
 
 // AssistedServiceStatus defines the observed state of AssistedService
 type AssistedServiceStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// SyncState holds the status of the connection to the service
+	// +kubebuilder:validation:Enum="";OK;error
+	SyncState SyncState `json:"syncState"`
+
+	// LastUpdated identifies when this status was last observed.
+	// +optional
+	LastUpdated *metav1.Time `json:"lastUpdated,omitempty"`
 }
 
 // +kubebuilder:object:root=true
