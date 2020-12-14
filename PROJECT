@@ -6,6 +6,9 @@ resources:
 - group: service
   kind: AssistedService
   version: v1
+- group: service
+  kind: Cluster
+  version: v1
 version: 3-alpha
 plugins:
   go.sdk.operatorframework.io/v2-alpha: {}

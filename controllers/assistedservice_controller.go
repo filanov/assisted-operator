@@ -20,13 +20,13 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"time"
 
 	servicev1 "github.com/filanov/assisted-operator/api/v1"
 	"github.com/go-logr/logr"
 	aiclient "github.com/openshift/assisted-service/client"
 	"github.com/openshift/assisted-service/client/installer"
 	"github.com/openshift/assisted-service/pkg/auth"
-	"github.com/pkg/errors"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -74,15 +74,19 @@ func (r *AssistedServiceReconciler) Reconcile(req ctrl.Request) (ctrl.Result, er
 	reply, err := c.Installer.ListClusters(ctx, &installer.ListClustersParams{})
 	if err != nil {
 		log.Error(err, "failed to connect to service")
-		return ctrl.Result{}, errors.Wrapf(err, "failed to list clusters from %s", service.Spec.URL)
+		service.Status.SyncState = servicev1.SyncStateError
+		err = r.Status().Update(ctx, service)
+		return ctrl.Result{RequeueAfter: 10 * time.Second}, err
 	}
+
 	clusters := reply.GetPayload()
 	for _, cluster := range clusters {
 		log.Info(fmt.Sprintf("found cluster ID: %s name: %s nodes: %d",
 			cluster.ID.String(), cluster.Name, len(cluster.Hosts)))
 	}
-
-	return ctrl.Result{}, nil
+	service.Status.SyncState = servicev1.SyncStateOK
+	err = r.Status().Update(ctx, service)
+	return ctrl.Result{RequeueAfter: 10 * time.Second}, err
 }
 
 func (r *AssistedServiceReconciler) SetupWithManager(mgr ctrl.Manager) error {

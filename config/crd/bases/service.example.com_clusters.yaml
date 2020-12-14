@@ -6,20 +6,20 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.3.0
   creationTimestamp: null
-  name: assistedservices.service.example.com
+  name: clusters.service.example.com
 spec:
   group: service.example.com
   names:
-    kind: AssistedService
-    listKind: AssistedServiceList
-    plural: assistedservices
-    singular: assistedservice
+    kind: Cluster
+    listKind: ClusterList
+    plural: clusters
+    singular: cluster
   scope: Namespaced
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
-      description: AssistedService is the Schema for the assistedservices API
+      description: Cluster is the Schema for the clusters API
       properties:
         apiVersion:
           description: 'APIVersion defines the versioned schema of this representation
@@ -34,24 +34,21 @@ spec:
         metadata:
           type: object
         spec:
-          description: AssistedServiceSpec defines the desired state of AssistedService
+          description: ClusterSpec defines the desired state of Cluster
           properties:
-            token:
+            assisted-service:
+              description: AssistedService to create this cluster on
               type: string
-            url:
-              description: URL is a location of an assisted-service instance
+            name:
+              description: Name of the new cluster
               type: string
-          required:
-          - token
-          - url
+            pullSecret:
+              description: PullSecret for cluster
+              type: string
           type: object
         status:
-          description: AssistedServiceStatus defines the observed state of AssistedService
+          description: ClusterStatus defines the observed state of Cluster
           properties:
-            lastUpdated:
-              description: LastUpdated identifies when this status was last observed.
-              format: date-time
-              type: string
             syncState:
               description: SyncState holds the status of the connection to the service
               enum:
